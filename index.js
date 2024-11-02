@@ -12,9 +12,29 @@ client.on('ready', async () => {
     client.user?.setAFK(true);
     const COMMANDS_DIRECTORY = path.join(__dirname, 'commands')
     commands = fs
-      .readdirSync(COMMANDS_DIRECTORY) // find the plugins
-      .filter(x => x.endsWith('.js')) // only use .js files
+      .readdirSync(COMMANDS_DIRECTORY)
+      .filter(x => x.endsWith('.js'))
       .map(pluginName => require(path.join(COMMANDS_DIRECTORY, pluginName)))
+
+
+      const EVENTS_DIRECTORY = path.join(__dirname, 'events');
+      fs.readdir(EVENTS_DIRECTORY, {withFileTypes: true}, (err, files) => {
+        for(const folder of files) {
+          if(!folder.isDirectory()) continue;
+          const folderDir = path.join(EVENTS_DIRECTORY, folder.name);
+          fs.readdir(folderDir, {withFileTypes: true}, (err, files) => {
+            for(const file of files) {
+              // console.log(path.join(folderDir, file.name))
+              const eventFunction = require(`${folderDir}/${file.name}`);//require(path.join(folderDir, file.name));
+              // console.log(eventFunction);
+              client.on(folder.name, async(...args) => {
+                eventFunction(client, ...args);
+              })
+            }
+          })
+        }
+      })
+
 })
 
 client.on('messageCreate', async(message) => {
@@ -28,7 +48,5 @@ client.on('messageCreate', async(message) => {
     }
   }
 })
-
-
 
 client.login(config.discord);

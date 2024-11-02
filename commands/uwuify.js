@@ -11,10 +11,12 @@ async function uwuify(/** @type {Client} */  client, /** @type {Message} */  mes
             message.delete();
             replyMessage.edit(await fetchKawaii(replyMessage.content));
         } else {
-            
+            message.edit(await fetchKawaii(replyMessage.content));
         }
+        return;
     } else {
         message.edit(await fetchKawaii(args));
+        return;
     }
 }
 

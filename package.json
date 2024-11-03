@@ -11,7 +11,9 @@
   "description": "",
   "dependencies": {
     "discord.js-selfbot-v13": "^3.4.2",
-    "groq-sdk": "^0.7.0"
+    "groq-sdk": "^0.7.0",
+    "sqlite": "^5.1.1",
+    "sqlite3": "^5.1.7"
   },
   "devDependencies": {
     "@types/node": "^22.8.6"

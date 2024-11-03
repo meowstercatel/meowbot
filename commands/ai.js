@@ -1,44 +1,40 @@
 const { Client, Message } = require('discord.js-selfbot-v13');
 const { Groq } = require("groq-sdk");
 const /** @type  {Groq}*/ groq = require("../utils/groq")
-async function uwuify(/** @type {Client} */  client, /** @type {Message} */  message ) {
-    console.log("uwuify")
+async function ai(/** @type {Client} */  client, /** @type {Message} */  message ) {
     const args = message.content.split(" ").slice(1).join(" ");
     if(message.reference && message.reference.type == "DEFAULT" && message.type == "REPLY" && args.length == 0) {
         const replyId = message.reference.messageId;
         const replyMessage = await message.channel.messages.fetch(replyId);
         if(replyMessage.author.id == client.user.id) {
             message.delete();
-            replyMessage.edit(await fetchKawaii(replyMessage.content));
+            replyMessage.edit(await fetchAiMessage(replyMessage.content));
         } else {
-            message.edit(await fetchKawaii(replyMessage.content));
+            message.edit(await fetchAiMessage(replyMessage.content));
         }
     } else if(args.length !== 0) {
-        message.edit(await fetchKawaii(args));
+        message.edit(await fetchAiMessage(args));
     } else {
-        message.edit(`command usage: ,uwuify <message>
-        <reply> ,uwuify`);
+        message.edit(`command usage: ,ai <message>
+        <reply> ,ai`);
         setTimeout(async() =>{
             message.delete();
         }, 3000)
     }
 }
 
-module.exports = uwuify;
+module.exports = ai;
 
-async function fetchKawaii(msg) {
+async function fetchAiMessage(msg) {
     const completion = await groq.chat.completions.create({
         messages: [
-            {
-                role: "system",
-                content: "YOUR ROLE IS TO REFORMAT THE USERS MESSAGE IN YOUR STYLE. DON'T WRITE MORE TEXT THAN THE USER. you're a kawaii girl that sends cute kawaii-like messages. Try to sound cute but also nerdy at the same time."
-            },
             {
                 role: "user",
                 content: msg
             }
         ],
-        model: "llama3-8b-8192"
+        model: "llama-3.1-70b-versatile"
     })
-    return completion.choices[0].message;
+    // return completion.choices[0].message;
+    return `prompt: ${msg}\n\nanswer: ${completion.choices[0].message.content}`;
 }

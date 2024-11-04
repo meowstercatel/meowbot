@@ -11,7 +11,7 @@ async function deletedSaver(/** @type {Client} */  client, /** @type {Message} *
             'INSERT INTO deleted_messages (id, channel_id, guild_id, created_at, content) VALUES (?, ?, ?, ?, ?)',
             message.id,
             message.channel.id,
-            message.guild.id,
+            message.guild ? message.guild.id : null,
             message.createdTimestamp,
             message.content
         )
